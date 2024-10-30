@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jade's Portfolio/Connections</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        function setInitialMode() {
+            const currentHour = new Date().getHours();
+            const isNightTime = currentHour >= 19 || currentHour < 6;
+            const nightModeToggle = document.getElementById('nightModeToggle');
+
+            if (isNightTime) {
+                document.body.classList.add('night-mode');
+                nightModeToggle.textContent = 'Day Mode';
+            }
+        }
+
+        // Run the function before the page content loads
+        document.addEventListener('DOMContentLoaded', setInitialMode);
+    </script>
+</head>
+
+<body>
+    <button id="nightModeToggle" class="night-mode-toggle">Night Mode</button>
+    <div class="content">
+        <div class="name">Richard Gubijev</div>
+        <div class="content-text"></div>
+        <div class="social-bar">
+            <button class="social-btn github"
+                onclick="window.open('https://www.github.com/RichardGubijev', '_blank')">GitHub</button>
+            <button class="social-btn linkedin"
+                onclick="window.open('https://www.linkedin.com/in/richard-gubijev/', '_blank')">LinkedIn</button>
+            <button class="social-btn email"
+                onclick="window.open('mailto:email.unlikable057@passmail.net', '_blank')">Email</button>
+        </div>
+    </div>
+
+    <script>
+        const nightModeToggle = document.getElementById('nightModeToggle');
+        const body = document.body;
+
+        // Update button text based on initial mode
+        if (body.classList.contains('night-mode')) {
+            nightModeToggle.textContent = 'Day Mode';
+        }
+
+        nightModeToggle.addEventListener('click', () => {
+            body.classList.toggle('night-mode');
+            nightModeToggle.textContent = body.classList.contains('night-mode') ? 'Day Mode' : 'Night Mode';
+        });
+
+        // Function to copy PGP key to clipboard
+        document.getElementById('copyPgpKey').addEventListener('click', () => {
+            const pgpKey = document.getElementById('pgpKey').innerText;
+            navigator.clipboard.writeText(pgpKey).then(() => {
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        });
+    </script>
+</body>
+
+</html>
