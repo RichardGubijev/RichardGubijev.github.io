@@ -27,7 +27,7 @@
     <button id="nightModeToggle" class="night-mode-toggle">Night Mode</button>
     <div class="content">
         <div class="name">Richard Gubijev</div>
-        <div class="content-text">In-progress...</div>
+        <div class="content-text">PhD Student @ King's College London</div>
         <div class="social-bar">
             <button class="social-btn github"
                 onclick="window.open('https://www.github.com/RichardGubijev', '_blank')">GitHub</button>
@@ -35,6 +35,13 @@
                 onclick="window.open('https://www.linkedin.com/in/richard-gubijev/', '_blank')">LinkedIn</button>
             <button class="social-btn email"
                 onclick="window.open('mailto:email.unlikable057@passmail.net', '_blank')">Email</button>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="header">Project Repositories</div>
+        <div class="content-text" name="repos">
+            <div class="loading-repos">Loading repositories...</div>
         </div>
     </div>
 
@@ -52,14 +59,102 @@
             nightModeToggle.textContent = body.classList.contains('night-mode') ? 'Day Mode' : 'Night Mode';
         });
 
-        // Function to copy PGP key to clipboard
-        document.getElementById('copyPgpKey').addEventListener('click', () => {
-            const pgpKey = document.getElementById('pgpKey').innerText;
-            navigator.clipboard.writeText(pgpKey).then(() => {
-            }).catch(err => {
-                console.error('Failed to copy: ', err);
-            });
-        });
+        function getRepos() {
+            fetch("https://api.github.com/users/RichardGubijev/repos", {
+                headers: {
+                    'Accept': 'application/vnd.github+json',
+                    'X-GitHub-Api-Version': '2022-11-28'
+                }
+            }).then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    const reposElement = document.getElementsByName('repos')[0];
+                    if (reposElement) {
+                        // Sort repositories by last updated date (newest first)
+                        data.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+                        
+                        // Create a grid container for repositories
+                        const repoGrid = document.createElement('div');
+                        repoGrid.className = 'repo-grid';
+                        
+                        // Process and display each repository
+                        data.forEach(repo => {
+                            // Format dates
+                            const createdDate = new Date(repo.created_at);
+                            const updatedDate = new Date(repo.updated_at);
+                            const formatDate = (date) => {
+                                return date.toLocaleDateString('en-US', { 
+                                    year: 'numeric', 
+                                    month: 'short', 
+                                    day: 'numeric' 
+                                });
+                            };
+                            
+                            // Create repo item container
+                            const repoItem = document.createElement('div');
+                            repoItem.className = 'repo-item';
+                            
+                            // Create and add title with link
+                            const titleDiv = document.createElement('div');
+                            titleDiv.className = 'repo-title';
+                            const titleLink = document.createElement('a');
+                            titleLink.href = repo.html_url;
+                            titleLink.target = '_blank';
+                            titleLink.textContent = repo.name;
+                            titleDiv.appendChild(titleLink);
+                            repoItem.appendChild(titleDiv);
+                            
+                            // Add description if available
+                            if (repo.description && repo.description !== "None") {
+                                const descDiv = document.createElement('div');
+                                descDiv.className = 'repo-description';
+                                descDiv.textContent = repo.description;
+                                repoItem.appendChild(descDiv);
+                            }
+                            
+                            // Add created date
+                            const createdDiv = document.createElement('div');
+                            createdDiv.className = 'repo-meta';
+                            createdDiv.textContent = `Created: ${formatDate(createdDate)}`;
+                            repoItem.appendChild(createdDiv);
+                            
+                            // Add updated date
+                            const updatedDiv = document.createElement('div');
+                            updatedDiv.className = 'repo-meta';
+                            updatedDiv.textContent = `Last updated: ${formatDate(updatedDate)}`;
+                            repoItem.appendChild(updatedDiv);
+                            
+                            // Add language if available
+                            if (repo.language) {
+                                const langDiv = document.createElement('div');
+                                langDiv.className = 'repo-languages';
+                                const langTag = document.createElement('span');
+                                langTag.className = 'language-tag';
+                                langTag.textContent = repo.language;
+                                langDiv.appendChild(langTag);
+                                repoItem.appendChild(langDiv);
+                            }
+                            
+                            // Add the completed repo item to the grid
+                            repoGrid.appendChild(repoItem);
+                        });
+                        
+                        // Clear loading message and add the grid
+                        reposElement.innerHTML = '';
+                        reposElement.appendChild(repoGrid);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching repositories:', error);
+                    const reposElement = document.getElementsByName('repos')[0];
+                    if (reposElement) {
+                        reposElement.innerHTML = '<div class="error-message">Error loading repositories. Please try again later.</div>';
+                    }
+                });
+        }
+    
+        getRepos();
+
     </script>
 </body>
 
