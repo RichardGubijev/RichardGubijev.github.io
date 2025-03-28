@@ -1,7 +1,8 @@
 <div class="pgp-container">
-  <h2>PGP Key</h2>
-  <button id="copyPgpKey" class="copy-btn">Copy PGP Key</button> <!-- Added copy button -->
-  <pre class="pgp-key" id="pgpKey">
+	<h2>PGP Key</h2>
+	<button id="copyPgpKey" class="copy-btn">Copy PGP Key</button>
+	<!-- Added copy button -->
+	<pre class="pgp-key" id="pgpKey">
     <!-- Add your PGP key here -->
     -----BEGIN PGP PUBLIC KEY BLOCK-----
     
@@ -10,3 +11,16 @@
     -----END PGP PUBLIC KEY BLOCK-----
   </pre>
 </div>
+
+<script>
+	// Function to copy PGP key to clipboard
+	document.getElementById("copyPgpKey").addEventListener("click", () => {
+		const pgpKey = document.getElementById("pgpKey").innerText;
+		navigator.clipboard
+			.writeText(pgpKey)
+			.then(() => {})
+			.catch((err) => {
+				console.error("Failed to copy: ", err);
+			});
+	});
+</script>
